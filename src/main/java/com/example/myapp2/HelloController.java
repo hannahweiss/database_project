@@ -11,7 +11,7 @@ public class HelloController {
   }
   @RequestMapping("/api/hello/object")
   public HelloObject sayHelloObject() {
-    HelloObject obj = new HelloObject("Hello Jose Annunziato!");
+    HelloObject obj = new HelloObject("Hello Hannah Weiss!");
     return obj;
   }
 }
