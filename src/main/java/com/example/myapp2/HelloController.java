@@ -9,4 +9,9 @@ public class HelloController {
   public String sayHello() {
     return "Hello Hannah Weiss!";
   }
+  @RequestMapping("/api/hello/object")
+  public HelloObject sayHelloObject() {
+    HelloObject obj = new HelloObject("Hello Jose Annunziato!");
+    return obj;
+  }
 }
