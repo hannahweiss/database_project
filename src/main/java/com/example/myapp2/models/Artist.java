@@ -1,5 +1,7 @@
 package com.example.myapp2.models;
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 
@@ -11,6 +13,23 @@ public class Artist {
     private Integer userId;
     @Column(name="bio")
     private String bio;
+
+    @ManyToMany
+    @JoinTable(
+        name = "recordings",
+        joinColumns = @JoinColumn(name = "artist_id"),
+        inverseJoinColumns = @JoinColumn(name = "song_id")
+    )
+    private Set<Song> songRecordings;
+
+    public Artist(){
+        this.songRecordings = new HashSet<Song>();
+    }
+
+    public Artist(Integer userId){
+        this.userId = userId;
+        this.songRecordings = new HashSet<Song>();
+    }
 
     public Integer getUserId() {
         return userId;
@@ -28,13 +47,11 @@ public class Artist {
         this.bio = bio;
     }
 
-    public Artist(){
-
+    public Set<Song> getSongRecordings() {
+        return songRecordings;
     }
 
-    public Artist(Integer userId){
-        this.userId = userId;
+    public void setSongRecordings(Set<Song> songRecordings) {
+        this.songRecordings = songRecordings;
     }
-
-
 }

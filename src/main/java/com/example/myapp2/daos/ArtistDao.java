@@ -6,6 +6,7 @@ import com.example.myapp2.models.User;
 import com.example.myapp2.repositories.ArtistRepository;
 import com.example.myapp2.repositories.SongRepository;
 import com.example.myapp2.repositories.UserRepository;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,4 +53,13 @@ public class ArtistDao {
         artistRepository.save(artist);
         return artist;
     }
+
+    @GetMapping("/findAllRecordings/{artistId}")
+        public Set<Song> findAllRecordings(
+            @PathVariable("artistId") Integer artistId) {
+        Artist artist = artistRepository.findById(artistId).get();
+        Set<Song> songRecordings =  artist.getSongRecordings();
+        return songRecordings;
+    }
+
 }
