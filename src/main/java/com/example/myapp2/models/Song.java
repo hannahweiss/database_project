@@ -20,8 +20,13 @@ public class Song {
     @ManyToMany(mappedBy = "songRecordings")
     private Set<Artist> artists;
 
+    @JsonIgnore
+    @ManyToMany(mappedBy = "songAdditions")
+    private Set<Playlist> playlists;
+
     public Song(){
         this.artists = new HashSet<Artist>();
+        this.playlists = new HashSet<Playlist>();
     }
 
     public Song(Integer id, String name, Integer duration) {
@@ -29,6 +34,7 @@ public class Song {
         this.name = name;
         this.duration = duration;
         this.artists = new HashSet<Artist>();
+        this.playlists = new HashSet<Playlist>();
     }
 
     public Integer getId() {
@@ -61,5 +67,13 @@ public class Song {
 
     public void setArtists(Set<Artist> artists) {
         this.artists = artists;
+    }
+
+    public Set<Playlist> getPlaylists() {
+        return playlists;
+    }
+
+    public void setPlaylists(Set<Playlist> playlists) {
+        this.playlists = playlists;
     }
 }

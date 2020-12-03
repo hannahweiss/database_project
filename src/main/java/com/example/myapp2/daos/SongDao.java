@@ -1,8 +1,10 @@
 package com.example.myapp2.daos;
 
 import com.example.myapp2.models.Artist;
+import com.example.myapp2.models.Playlist;
 import com.example.myapp2.models.Song;
 import com.example.myapp2.repositories.ArtistRepository;
+import com.example.myapp2.repositories.PlaylistRepository;
 import com.example.myapp2.repositories.SongRepository;
 import com.example.myapp2.repositories.UserRepository;
 import java.util.Set;
@@ -19,6 +21,8 @@ public class SongDao {
     ArtistRepository artistRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    PlaylistRepository playlistRepository;
 
     @GetMapping("/findAllSongs")
     public Iterable<Song> findAllSongs() {
@@ -56,5 +60,27 @@ public class SongDao {
         artistRepository.save(currentArtist);
 
         return song;
+    }
+
+    @GetMapping("/addSongToPlaylist/{playlistId}/{songId}")
+    public Playlist addSongToPlaylist(
+            @PathVariable("playlistId") Integer playlistId,
+            @PathVariable("songId") Integer songId) {
+        Song song = songRepository.findById(songId).get();
+
+        Set<Playlist> playlists = song.getPlaylists();
+        Playlist currentPlaylist = playlistRepository.findById(playlistId).get();
+        playlists.add(currentPlaylist);
+        song.setPlaylists(playlists);
+
+        songRepository.save(song);
+
+        Set<Song> songAdditions = currentPlaylist.getSongAdditions();
+        songAdditions.add(song);
+        currentPlaylist.setSongAdditions(songAdditions);
+
+        playlistRepository.save(currentPlaylist);
+
+        return currentPlaylist;
     }
 }
