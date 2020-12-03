@@ -1,4 +1,5 @@
 package com.example.myapp2.models;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
@@ -15,6 +16,7 @@ public class Song {
     @Column(name="duration_in_seconds")
     private Integer duration;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "songRecordings")
     private Set<Artist> artists;
 

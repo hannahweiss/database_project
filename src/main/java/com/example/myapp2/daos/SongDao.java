@@ -35,11 +35,12 @@ public class SongDao {
         songRepository.deleteById(id);
     }
 
-    @GetMapping("/createSong/{artistId}")
+    @GetMapping("/createSong/{artistId}/{songName}")
     public Song createSong(
-        @PathVariable("artistId") Integer artistId) {
+        @PathVariable("artistId") Integer artistId,
+        @PathVariable("songName") String songName) {
         Song song = new Song();
-        song.setName("new_song");
+        song.setName(songName);
 
         Set<Artist> artists = song.getArtists();
         Artist currentArtist = artistRepository.findById(artistId).get();
