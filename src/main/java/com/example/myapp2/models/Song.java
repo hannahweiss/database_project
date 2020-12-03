@@ -1,4 +1,7 @@
 package com.example.myapp2.models;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.*;
 
 @Entity
@@ -13,13 +16,19 @@ public class Song {
     @Column(name="duration_in_seconds")
     private Integer duration;
 
+    @JsonIgnore
+    @ManyToMany(mappedBy = "songRecordings")
+    private Set<Artist> artists;
+
     public Song(){
+        this.artists = new HashSet<Artist>();
     }
 
     public Song(Integer id, String name, Integer duration) {
         this.id = id;
         this.name = name;
         this.duration = duration;
+        this.artists = new HashSet<Artist>();
     }
 
     public Integer getId() {
@@ -46,4 +55,11 @@ public class Song {
         this.duration = duration;
     }
 
+    public Set<Artist> getArtists() {
+        return artists;
+    }
+
+    public void setArtists(Set<Artist> artists) {
+        this.artists = artists;
+    }
 }
