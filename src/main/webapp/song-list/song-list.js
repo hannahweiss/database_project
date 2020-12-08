@@ -3,9 +3,17 @@ class SongList extends React.Component {
     songs: []
   }
 
+  findSongArtists = (songId) =>
+      findSongArtists(songId)
+      .then(response => response)
+
   findAllSongs = () =>
       findAllSongs()
-      .then((songs) => this.setState({songs}))
+      .then((songs) => {
+        songs.map((song) =>
+            this.findSongArtists(song.id).then((response) => song.artists = response))
+        this.setState({songs: songs})
+      })
 
   createSong = () =>
       createSong(artistId, songName)
@@ -15,11 +23,11 @@ class SongList extends React.Component {
       deleteSong(id)
       .then(() => this.findAllSongs())
 
-  componentDidMount = () =>
-      this.findAllSongs()
+  componentDidMount = () => {
+    this.findAllSongs()
+  }
 
   render() {
-    console.log(this.state.songs[0].getArtists())
     return(
         <div className="container-fluid">
           <button
@@ -36,11 +44,9 @@ class SongList extends React.Component {
               this.state.songs.map((song) =>
                   <tr key={song.id}>
                     <td>{song.name}</td>
-                    <td>
-                    {/*  {song.artists}.map((artist) =>*/}
-                    {/*<p>{song.artists[artist] + ", "}</p>*/}
-                    {/*)*/}
-                    </td>
+                    {song.artists}.map((artist) =>
+                    <td>{song.artists[artist]}</td>
+                    )
                     <td>{song.duration}</td>
                     <td>
                       {/*<a className="btn btn-primary float-right"*/}

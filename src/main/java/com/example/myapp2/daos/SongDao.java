@@ -83,4 +83,12 @@ public class SongDao {
 
         return currentPlaylist;
     }
+
+    @GetMapping("/findArtistsBySong/{songId}")
+    public Set<Artist> findArtistsBySong(
+        @PathVariable("songId") Integer songId) {
+        Song song = songRepository.findById(songId).get();
+        Set<Artist> artists = song.getArtists();
+        return artists;
+    }
 }
