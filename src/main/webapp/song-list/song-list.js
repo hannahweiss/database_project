@@ -53,7 +53,7 @@ class SongList extends React.Component {
                             <td>{song.name}</td>
                             { song.artists ?
                             <td>{song.artists.map((artist) =>
-                              <p>{artist.userId}</p>
+                              <p>{artist.firstName} {artist.lastName}</p>
                             )}</td>
                                 : <td></td> }
                             <td>{song.duration}</td>

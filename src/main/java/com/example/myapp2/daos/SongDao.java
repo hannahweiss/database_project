@@ -3,10 +3,13 @@ package com.example.myapp2.daos;
 import com.example.myapp2.models.Artist;
 import com.example.myapp2.models.Playlist;
 import com.example.myapp2.models.Song;
+import com.example.myapp2.models.User;
 import com.example.myapp2.repositories.ArtistRepository;
 import com.example.myapp2.repositories.PlaylistRepository;
 import com.example.myapp2.repositories.SongRepository;
 import com.example.myapp2.repositories.UserRepository;
+
+import java.util.HashSet;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -85,10 +88,16 @@ public class SongDao {
     }
 
     @GetMapping("/findArtistsBySong/{songId}")
-    public Set<Artist> findArtistsBySong(
+    public Set<User> findArtistsBySong(
         @PathVariable("songId") Integer songId) {
         Song song = songRepository.findById(songId).get();
         Set<Artist> artists = song.getArtists();
-        return artists;
+        Set<User> users = new HashSet<>();
+        for (Artist artist : artists){
+            int userId = artist.getUserId();
+            User user = userRepository.findById(userId).get();
+            users.add(user);
+        }
+        return users;
     }
 }
