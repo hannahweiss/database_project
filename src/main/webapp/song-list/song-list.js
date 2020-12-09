@@ -2,15 +2,17 @@ class SongList extends React.Component {
   state = {
     songs: [],
     artistLoading: true,
-    genreLoading: true
+    genreLoading: true,
+    newSongArtist: '',
+    newSongName: ''
   }
 
   findSongArtists = (songId) =>
       findSongArtists(songId)
       .then(response => response)
 
-  findSongGenre = (songId) =>
-      findSongGenre(songId)
+  findSongGenres = (songId) =>
+      findSongGenres(songId)
       .then(response => response)
 
   findAllSongs = () => {
@@ -20,15 +22,15 @@ class SongList extends React.Component {
           this.findSongArtists(song.id).then(
               response => song.artists = response).finally(
                   () => this.setState({artistLoading: false}))
-          this.findSongGenre(song.id).then(
-              response => song.genre = response).finally(
+          this.findSongGenres(song.id).then(
+              response => song.genres = response).finally(
               () => this.setState({genreLoading: false}))
       })
       this.setState({songs: songs})
     })
   }
 
-  createSong = () =>
+  createSong = (artistId, songName) =>
       createSong(artistId, songName)
       .then(() => this.findAllSongs())
 
@@ -41,15 +43,11 @@ class SongList extends React.Component {
   }
 
   render() {
-    console.log('this is song list state', this.state.songs)
+    console.log(this.state)
       return (
             this.state.artistLoading ?
                 <div>Loading...</div> :
                 <div className="container-fluid">
-                  <button
-                      onClick={() => this.createSong()}>
-                    Create
-                  </button>
                   <a href="../../index.html">
                     Home
                   </a>
@@ -62,10 +60,14 @@ class SongList extends React.Component {
                             <td>{song.name}</td>
                             { song.artists ?
                             <td>{song.artists.map((artist) =>
-                              <p>{artist.firstName} {artist.lastName}</p>
+                              <p key={artist.id}>{artist.firstName} {artist.lastName}</p>
                             )}</td>
                                 : <td></td> }
                             <td>{song.duration}</td>
+                            { song.genres ?
+                                <td>{song.genres.map((genre) =>
+                                    <p key={genre.id}>{genre.name}</p>
+                                )}</td> : <td></td> }
                             <td>
                               {/*<a className="btn btn-primary float-right"*/}
                               {/*   href={`/course-editor/course-editor.html?courseId=${course.courseId}`}>*/}

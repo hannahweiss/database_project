@@ -5,16 +5,16 @@ import com.example.myapp2.models.Artist;
 import com.example.myapp2.models.Genre;
 import com.example.myapp2.models.Playlist;
 import com.example.myapp2.models.Song;
-import com.example.myapp2.models.SongGenre;
 import com.example.myapp2.models.User;
 import com.example.myapp2.repositories.ArtistRepository;
 import com.example.myapp2.repositories.GenreRepository;
 import com.example.myapp2.repositories.PlaylistRepository;
-import com.example.myapp2.repositories.SongGenreRepository;
 import com.example.myapp2.repositories.SongRepository;
 import com.example.myapp2.repositories.UserRepository;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +32,6 @@ public class SongDao {
     UserRepository userRepository;
     @Autowired
     PlaylistRepository playlistRepository;
-    @Autowired
-    SongGenreRepository songGenreRepository;
     @Autowired
     GenreRepository genreRepository;
 
@@ -111,17 +109,25 @@ public class SongDao {
         return users;
     }
 
-    @GetMapping("/findGenreBySong/{songId}")
-    public Genre findGenreBySong (
+    @GetMapping("/findGenresBySong/{songId}")
+    public Set<Genre> findGenreBySong (
         @PathVariable("songId") Integer songId) {
-        Genre genre = null;
-        Iterable<SongGenre> songGenres = songGenreRepository.findAll();
-        for (SongGenre sg : songGenres) {
-            if (sg.getSongId() == songId) {
-                int genreId = sg.getGenreId();
-                genre = genreRepository.findById(genreId).get();
+        Song song = songRepository.findById(songId).get();
+        return song.getGenres();
+    }
+
+    @GetMapping("/findSongsByGenre/{genreId}")
+    public List<Song> findSongsByGenre (
+        @PathVariable("genreId") Integer genreId) {
+        List<Song> songs = new ArrayList<>();
+        Iterable<Song> allSongs = songRepository.findAll();
+        for (Song s : allSongs) {
+            for (Genre g : s.getGenres()) {
+                if (g.getId() == genreId) {
+                    songs.add(s);
+                }
             }
         }
-        return genre;
+        return songs;
     }
 }

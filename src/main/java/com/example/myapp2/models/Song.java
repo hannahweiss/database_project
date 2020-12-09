@@ -24,9 +24,18 @@ public class Song {
     @ManyToMany(mappedBy = "songAdditions")
     private Set<Playlist> playlists;
 
+    @ManyToMany
+    @JoinTable(
+        name = "song_genres",
+        joinColumns = @JoinColumn(name = "song_id"),
+        inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private Set<Genre> genres;
+
     public Song(){
         this.artists = new HashSet<Artist>();
         this.playlists = new HashSet<Playlist>();
+        this.genres = new HashSet<Genre>();
     }
 
     public Song(Integer id, String name, Integer duration) {
@@ -35,6 +44,7 @@ public class Song {
         this.duration = duration;
         this.artists = new HashSet<Artist>();
         this.playlists = new HashSet<Playlist>();
+        this.genres = new HashSet<Genre>();
     }
 
     public Integer getId() {
@@ -75,5 +85,13 @@ public class Song {
 
     public void setPlaylists(Set<Playlist> playlists) {
         this.playlists = playlists;
+    }
+
+    public Set<Genre> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(Set<Genre> genres) {
+        this.genres = genres;
     }
 }
