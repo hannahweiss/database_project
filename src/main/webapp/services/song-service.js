@@ -31,4 +31,9 @@ const findSongArtists = (songId) =>
 
 const findSongGenre = (id) =>
     fetch(`${FIND_SONG_GENRE}/${id}`)
-    .then(response => response.json())
+        .then(response => {
+            return response.text()
+        })
+        .then((data) => {
+            return data ? JSON.parse(data) : {}
+        })

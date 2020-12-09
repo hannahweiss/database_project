@@ -16,7 +16,7 @@ class SongList extends React.Component {
   findAllSongs = () => {
     return findAllSongs()
     .then((songs) => {
-      songs.map((song) => {
+      songs.map((song, i) => {
           this.findSongArtists(song.id).then(
               response => song.artists = response).finally(
                   () => this.setState({artistLoading: false}))
@@ -41,7 +41,7 @@ class SongList extends React.Component {
   }
 
   render() {
-    console.log(this.state)
+    console.log('this is song list state', this.state.songs)
       return (
             this.state.artistLoading ?
                 <div>Loading...</div> :
