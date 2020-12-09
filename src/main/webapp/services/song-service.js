@@ -4,6 +4,7 @@ const CREATE_SONG_URL = "http://localhost:8080/createSong"
 const DELETE_SONG_URL = "http://localhost:8080/deleteSong"
 const ADD_SONG_TO_PLAYLIST = "http://localhost:8080/addSongToPlaylist"
 const FIND_SONG_ARTISTS = "http://localhost:8080/findArtistsBySong"
+const FIND_SONG_GENRE = "http://localhost:8080/findGenreBySong"
 
 const findAllSongs = () =>
     fetch(`${FIND_ALL_SONGS}`)
@@ -26,4 +27,8 @@ const addSongToPlaylist = (playlistId, songId) =>
 
 const findSongArtists = (songId) =>
     fetch(`${FIND_SONG_ARTISTS}/${songId}`)
+    .then(response => response.json())
+
+const findSongGenre = (id) =>
+    fetch(`${FIND_SONG_GENRE}/${id}`)
     .then(response => response.json())

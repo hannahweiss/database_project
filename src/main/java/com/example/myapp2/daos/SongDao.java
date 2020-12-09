@@ -1,15 +1,21 @@
 package com.example.myapp2.daos;
 
+import antlr.ASTNULLType;
 import com.example.myapp2.models.Artist;
+import com.example.myapp2.models.Genre;
 import com.example.myapp2.models.Playlist;
 import com.example.myapp2.models.Song;
+import com.example.myapp2.models.SongGenre;
 import com.example.myapp2.models.User;
 import com.example.myapp2.repositories.ArtistRepository;
+import com.example.myapp2.repositories.GenreRepository;
 import com.example.myapp2.repositories.PlaylistRepository;
+import com.example.myapp2.repositories.SongGenreRepository;
 import com.example.myapp2.repositories.SongRepository;
 import com.example.myapp2.repositories.UserRepository;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +32,10 @@ public class SongDao {
     UserRepository userRepository;
     @Autowired
     PlaylistRepository playlistRepository;
+    @Autowired
+    SongGenreRepository songGenreRepository;
+    @Autowired
+    GenreRepository genreRepository;
 
     @GetMapping("/findAllSongs")
     public Iterable<Song> findAllSongs() {
@@ -99,5 +109,19 @@ public class SongDao {
             users.add(user);
         }
         return users;
+    }
+
+    @GetMapping("/findGenreBySong/{songId}")
+    public Genre findGenreBySong (
+        @PathVariable("songId") Integer songId) {
+        Genre genre = null;
+        Iterable<SongGenre> songGenres = songGenreRepository.findAll();
+        for (SongGenre sg : songGenres) {
+            if (sg.getSongId() == songId) {
+                int genreId = sg.getGenreId();
+                genre = genreRepository.findById(genreId).get();
+            }
+        }
+        return genre;
     }
 }

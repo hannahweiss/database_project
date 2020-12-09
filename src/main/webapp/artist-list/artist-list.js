@@ -51,12 +51,9 @@ class ArtistList extends React.Component {
                                     <td>{artist.socialMedias.map((socialMedia) =>
                                         <p>{socialMedia.url}</p>
                                     )}</td>
-                                    {/*<td>*/}
-                                    {/*    <button className="btn btn-danger float-right"*/}
-                                    {/*            onClick={() => this.deleteSong(song.id)}>*/}
-                                    {/*        Delete*/}
-                                    {/*    </button>*/}
-                                    {/*</td>*/}
+                                  <td>{artist.songRecordings.map((song) =>
+                                      <p>{song.name}</p>
+                                  )}</td>
                                 </tr>
                             )
                         }

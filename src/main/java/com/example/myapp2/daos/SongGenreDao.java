@@ -28,19 +28,19 @@ public class SongGenreDao {
     return songGenreRepository.findAll();
   }
 
-  @GetMapping("/findGenreBySong/{songId}")
-  public Optional<Genre> findGenreBySong (
-      @PathVariable("songId") Integer songId) {
-    Optional<Genre> genre = null;
-    Iterable<SongGenre> songGenres = songGenreRepository.findAll();
-    for (SongGenre sg : songGenres) {
-      if (sg.getSongId() == songId) {
-        int genreId = sg.getGenreId();
-        genre = genreRepository.findById(genreId);
-      }
-    }
-    return genre;
-  }
+//  @GetMapping("/findGenreBySong/{songId}")
+//  public Optional<Genre> findGenreBySong (
+//      @PathVariable("songId") Integer songId) {
+//    Optional<Genre> genre = null;
+//    Iterable<SongGenre> songGenres = songGenreRepository.findAll();
+//    for (SongGenre sg : songGenres) {
+//      if (sg.getSongId() == songId) {
+//        int genreId = sg.getGenreId();
+//        genre = genreRepository.findById(genreId);
+//      }
+//    }
+//    return genre;
+//  }
 
   @GetMapping("/findSongsByGenre/{genreId}")
   public List<Optional<Song>> findSongsByGenre (
