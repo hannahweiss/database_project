@@ -5,6 +5,7 @@ import com.example.myapp2.models.Artist;
 import com.example.myapp2.models.Genre;
 import com.example.myapp2.models.Playlist;
 import com.example.myapp2.models.Song;
+import com.example.myapp2.models.SongInformation;
 import com.example.myapp2.models.User;
 import com.example.myapp2.repositories.ArtistRepository;
 import com.example.myapp2.repositories.GenreRepository;
@@ -26,110 +27,138 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*")
 @RestController
 public class SongDao {
-    @Autowired
-    SongRepository songRepository;
-    @Autowired
-    ArtistRepository artistRepository;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    PlaylistRepository playlistRepository;
-    @Autowired
-    GenreRepository genreRepository;
 
-    @GetMapping("/findAllSongs")
-    public Iterable<Song> findAllSongs() {
-        return songRepository.findAll();
+  @Autowired
+  SongRepository songRepository;
+  @Autowired
+  ArtistRepository artistRepository;
+  @Autowired
+  UserRepository userRepository;
+  @Autowired
+  PlaylistRepository playlistRepository;
+  @Autowired
+  GenreRepository genreRepository;
+
+  @GetMapping("/findAllSongs")
+  public Iterable<Song> findAllSongs() {
+    return songRepository.findAll();
+  }
+
+  @GetMapping("/findSongById/{id}")
+  public Song findSongById(
+      @PathVariable("id") Integer id) {
+    return songRepository.findById(id).get();
+  }
+
+  @GetMapping("/deleteSong/{id}")
+  public void deleteSong(
+      @PathVariable("id") Integer id) {
+    songRepository.deleteById(id);
+  }
+
+  @GetMapping("/createSong/{artistId}/{songName}")
+  public Song createSong(
+      @PathVariable("artistId") Integer artistId,
+      @PathVariable("songName") String songName) {
+    Song song = new Song();
+    song.setName(songName);
+
+    Set<Artist> artists = song.getArtists();
+    Artist currentArtist = artistRepository.findById(artistId).get();
+    artists.add(currentArtist);
+    song.setArtists(artists);
+
+    songRepository.save(song);
+
+    Set<Song> recordings = currentArtist.getSongRecordings();
+    recordings.add(song);
+    currentArtist.setSongRecordings(recordings);
+
+    artistRepository.save(currentArtist);
+
+    return song;
+  }
+
+  @GetMapping("/addSongToPlaylist/{playlistId}/{songId}")
+  public Playlist addSongToPlaylist(
+      @PathVariable("playlistId") Integer playlistId,
+      @PathVariable("songId") Integer songId) {
+    Song song = songRepository.findById(songId).get();
+
+    Set<Playlist> playlists = song.getPlaylists();
+    Playlist currentPlaylist = playlistRepository.findById(playlistId).get();
+    playlists.add(currentPlaylist);
+    song.setPlaylists(playlists);
+
+    songRepository.save(song);
+
+    Set<Song> songAdditions = currentPlaylist.getSongAdditions();
+    songAdditions.add(song);
+    currentPlaylist.setSongAdditions(songAdditions);
+
+    playlistRepository.save(currentPlaylist);
+
+    return currentPlaylist;
+  }
+
+  @GetMapping("/findArtistsBySong/{songId}")
+  public Set<User> findArtistsBySong(
+      @PathVariable("songId") Integer songId) {
+    Song song = songRepository.findById(songId).get();
+    Set<Artist> artists = song.getArtists();
+    Set<User> users = new HashSet<>();
+    for (Artist artist : artists) {
+      int userId = artist.getUserId();
+      User user = userRepository.findById(userId).get();
+      users.add(user);
     }
-    @GetMapping("/findSongById/{id}")
-    public Song findSongById(
-            @PathVariable("id") Integer id) {
-        return songRepository.findById(id).get();
-    }
-    @GetMapping("/deleteSong/{id}")
-    public void deleteSong(
-            @PathVariable("id") Integer id) {
-        songRepository.deleteById(id);
-    }
+    return users;
+  }
 
-    @GetMapping("/createSong/{artistId}/{songName}")
-    public Song createSong(
-        @PathVariable("artistId") Integer artistId,
-        @PathVariable("songName") String songName) {
-        Song song = new Song();
-        song.setName(songName);
+  @GetMapping("/findGenresBySong/{songId}")
+  public Set<Genre> findGenreBySong(
+      @PathVariable("songId") Integer songId) {
+    Song song = songRepository.findById(songId).get();
+    return song.getGenres();
+  }
 
-        Set<Artist> artists = song.getArtists();
-        Artist currentArtist = artistRepository.findById(artistId).get();
-        artists.add(currentArtist);
-        song.setArtists(artists);
-
-        songRepository.save(song);
-
-        Set<Song> recordings = currentArtist.getSongRecordings();
-        recordings.add(song);
-        currentArtist.setSongRecordings(recordings);
-
-        artistRepository.save(currentArtist);
-
-        return song;
-    }
-
-    @GetMapping("/addSongToPlaylist/{playlistId}/{songId}")
-    public Playlist addSongToPlaylist(
-            @PathVariable("playlistId") Integer playlistId,
-            @PathVariable("songId") Integer songId) {
-        Song song = songRepository.findById(songId).get();
-
-        Set<Playlist> playlists = song.getPlaylists();
-        Playlist currentPlaylist = playlistRepository.findById(playlistId).get();
-        playlists.add(currentPlaylist);
-        song.setPlaylists(playlists);
-
-        songRepository.save(song);
-
-        Set<Song> songAdditions = currentPlaylist.getSongAdditions();
-        songAdditions.add(song);
-        currentPlaylist.setSongAdditions(songAdditions);
-
-        playlistRepository.save(currentPlaylist);
-
-        return currentPlaylist;
-    }
-
-    @GetMapping("/findArtistsBySong/{songId}")
-    public Set<User> findArtistsBySong(
-        @PathVariable("songId") Integer songId) {
-        Song song = songRepository.findById(songId).get();
-        Set<Artist> artists = song.getArtists();
-        Set<User> users = new HashSet<>();
-        for (Artist artist : artists){
-            int userId = artist.getUserId();
-            User user = userRepository.findById(userId).get();
-            users.add(user);
+  @GetMapping("/findSongsByGenre/{genreId}")
+  public List<Song> findSongsByGenre(
+      @PathVariable("genreId") Integer genreId) {
+    List<Song> songs = new ArrayList<>();
+    Iterable<Song> allSongs = songRepository.findAll();
+    for (Song s : allSongs) {
+      for (Genre g : s.getGenres()) {
+        if (g.getId() == genreId) {
+          songs.add(s);
         }
-        return users;
+      }
     }
+    return songs;
+  }
 
-    @GetMapping("/findGenresBySong/{songId}")
-    public Set<Genre> findGenreBySong (
-        @PathVariable("songId") Integer songId) {
-        Song song = songRepository.findById(songId).get();
-        return song.getGenres();
-    }
+  @GetMapping("/getSongsInformation")
+  public List<SongInformation> getSongsInformation() {
+    List<SongInformation> informations = new ArrayList<>();
 
-    @GetMapping("/findSongsByGenre/{genreId}")
-    public List<Song> findSongsByGenre (
-        @PathVariable("genreId") Integer genreId) {
-        List<Song> songs = new ArrayList<>();
-        Iterable<Song> allSongs = songRepository.findAll();
-        for (Song s : allSongs) {
-            for (Genre g : s.getGenres()) {
-                if (g.getId() == genreId) {
-                    songs.add(s);
-                }
-            }
-        }
-        return songs;
+    Iterable<Song> songs = findAllSongs();
+    for (Song s : songs) {
+      Set<Artist> artists = s.getArtists();
+      List<String> artistNames = new ArrayList<>();
+      for (Artist a : artists) {
+        int userId = a.getUserId();
+        User u = userRepository.findById(userId).get();
+        artistNames.add(u.getFirstName() + " " + u.getLastName());
+      }
+      Set<Genre> genres = s.getGenres();
+      List<String> genreNames = new ArrayList<>();
+      for (Genre g : genres) {
+        genreNames.add(g.getName());
+      }
+
+      SongInformation info = new SongInformation(s, artistNames, genreNames);
+      informations.add(info);
     }
+    return informations;
+  }
 }
