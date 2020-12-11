@@ -1,12 +1,9 @@
 package com.example.myapp2.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name="social_medias")
@@ -15,23 +12,18 @@ public class SocialMedia {
   @Column(name="id")
   private Integer id;
 
-  @Column(name="artist_id")
-  private Integer artistId;
-
   @Column(name="type_id")
   private Integer socialMediaType;
 
   @Column(name="url")
   private String url;
 
-  public SocialMedia(){
-  }
+  @JsonIgnore
+  @ManyToOne
+  @JoinColumn(name="artist_id", nullable=false)
+  private Artist artist;
 
-  public SocialMedia(Integer id, Integer artistId, Integer socialMediaType, String url) {
-    this.id = id;
-    this.artistId = artistId;
-    this.socialMediaType = socialMediaType;
-    this.url = url;
+  public SocialMedia(){
   }
 
   public Integer getId() {
@@ -40,14 +32,6 @@ public class SocialMedia {
 
   public void setId(Integer id) {
     this.id = id;
-  }
-
-  public Integer getArtistId() {
-    return artistId;
-  }
-
-  public void setArtistId(Integer artistId) {
-    this.artistId = artistId;
   }
 
   public Integer getSocialMediaType() {

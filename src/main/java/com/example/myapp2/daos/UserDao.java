@@ -3,10 +3,16 @@ package com.example.myapp2.daos;
 import com.example.myapp2.models.User;
 import com.example.myapp2.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@CrossOrigin(origins = "*")
 @RestController
 public class UserDao {
     @Autowired
@@ -20,17 +26,17 @@ public class UserDao {
             @PathVariable("id") Integer id) {
         return userRepository.findById(id).get();
     }
-    @GetMapping("/deleteUser/{id}")
+    @DeleteMapping("/deleteUser/{id}")
     public void deleteUser(
             @PathVariable("id") Integer id) {
         userRepository.deleteById(id);
     }
-    @GetMapping("/createUser")
-    public User createUser() {
-        User user = new User();
-        user.setUsername("new_username");
-        userRepository.save(user);
-        return user;
+    @PostMapping("/createUser")
+    public User createUser(
+            @RequestBody User newUser
+    ) {
+        userRepository.save(newUser);
+        return newUser;
     }
     @GetMapping("/renameUser/{id}/{newUsername}")
     public User renameUser(
@@ -49,5 +55,14 @@ public class UserDao {
         user.setPassword(newPassword);
         userRepository.save(user);
         return user;
+    }
+
+    @PutMapping("/updateUser/{userId}")
+    public User updateUser(
+            @PathVariable("userId") Integer userId,
+            @RequestBody User updatedUser
+    ) {
+        updatedUser.setId(userId);
+        return userRepository.save(updatedUser);
     }
 }

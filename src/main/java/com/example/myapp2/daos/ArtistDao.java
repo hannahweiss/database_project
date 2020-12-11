@@ -1,23 +1,29 @@
 package com.example.myapp2.daos;
 
-import com.example.myapp2.models.Artist;
-import com.example.myapp2.models.Song;
-import com.example.myapp2.models.User;
+import com.example.myapp2.models.*;
 import com.example.myapp2.repositories.ArtistRepository;
+import com.example.myapp2.repositories.SocialMediaRepository;
 import com.example.myapp2.repositories.SongRepository;
 import com.example.myapp2.repositories.UserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+@CrossOrigin(origins = "*")
 @RestController
 public class ArtistDao {
     @Autowired
     ArtistRepository artistRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    SocialMediaRepository socialMediaRepository;
     @GetMapping("/findAllArtists")
     public Iterable<Artist> findAllArtists() {
         return artistRepository.findAll();
@@ -55,11 +61,27 @@ public class ArtistDao {
     }
 
     @GetMapping("/findAllRecordings/{artistId}")
-        public Set<Song> findAllRecordings(
+    public Set<Song> findAllRecordings(
             @PathVariable("artistId") Integer artistId) {
         Artist artist = artistRepository.findById(artistId).get();
         Set<Song> songRecordings =  artist.getSongRecordings();
         return songRecordings;
+    }
+
+    @GetMapping("/findArtistsInformation")
+    public List<ArtistInformation> findArtistsInformation(){
+        List<ArtistInformation> informations = new ArrayList<>();
+
+        Iterable<Artist> artists = findAllArtists();
+        for (Artist a : artists){
+            int userId = a.getUserId();
+            User u = userRepository.findById(userId).get();
+            String artistName = (u.getFirstName() + " " + u.getLastName());
+
+            ArtistInformation info = new ArtistInformation(a, artistName);
+            informations.add(info);
+        }
+        return informations;
     }
 
 }

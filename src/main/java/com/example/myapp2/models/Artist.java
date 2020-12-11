@@ -22,13 +22,18 @@ public class Artist {
     )
     private Set<Song> songRecordings;
 
+    @OneToMany(mappedBy="artist")
+    private Set<SocialMedia> socialMedias;
+
     public Artist(){
         this.songRecordings = new HashSet<Song>();
+        this.socialMedias = new HashSet<SocialMedia>();
     }
 
     public Artist(Integer userId){
         this.userId = userId;
         this.songRecordings = new HashSet<Song>();
+        this.socialMedias = new HashSet<SocialMedia>();
     }
 
     public Integer getUserId() {
@@ -53,5 +58,13 @@ public class Artist {
 
     public void setSongRecordings(Set<Song> songRecordings) {
         this.songRecordings = songRecordings;
+    }
+
+    public Set<SocialMedia> getSocialMedias() {
+        return socialMedias;
+    }
+
+    public void setSocialMedias(Set<SocialMedia> socialMedias) {
+        this.socialMedias = socialMedias;
     }
 }
