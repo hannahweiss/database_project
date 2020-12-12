@@ -22,6 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(origins = "*")
@@ -56,28 +59,28 @@ public class SongDao {
     songRepository.deleteById(id);
   }
 
-  @GetMapping("/createSong/{artistId}/{songName}")
-  public Song createSong(
-      @PathVariable("artistId") Integer artistId,
-      @PathVariable("songName") String songName) {
-    Song song = new Song();
-    song.setName(songName);
-
-    Set<Artist> artists = song.getArtists();
-    Artist currentArtist = artistRepository.findById(artistId).get();
-    artists.add(currentArtist);
-    song.setArtists(artists);
-
-    songRepository.save(song);
-
-    Set<Song> recordings = currentArtist.getSongRecordings();
-    recordings.add(song);
-    currentArtist.setSongRecordings(recordings);
-
-    artistRepository.save(currentArtist);
-
-    return song;
-  }
+//  @GetMapping("/createSong/{artistId}/{songName}")
+//  public Song createSong(
+//      @PathVariable("artistId") Integer artistId,
+//      @PathVariable("songName") String songName) {
+//    Song song = new Song();
+//    song.setName(songName);
+//
+//    Set<Artist> artists = song.getArtists();
+//    Artist currentArtist = artistRepository.findById(artistId).get();
+//    artists.add(currentArtist);
+//    song.setArtists(artists);
+//
+//    songRepository.save(song);
+//
+//    Set<Song> recordings = currentArtist.getSongRecordings();
+//    recordings.add(song);
+//    currentArtist.setSongRecordings(recordings);
+//
+//    artistRepository.save(currentArtist);
+//
+//    return song;
+//  }
 
   @GetMapping("/addSongToPlaylist/{playlistId}/{songId}")
   public Playlist addSongToPlaylist(
@@ -160,5 +163,36 @@ public class SongDao {
       informations.add(info);
     }
     return informations;
+  }
+
+  @PostMapping("/{artistId}/createSong")
+  public Song createNewSong(
+      @PathVariable("artistId") Integer artistId,
+      @RequestBody Song song
+  ) {
+    Artist artist = artistRepository.findById(artistId).get();
+
+    Set<Song> songsForArtist = artist.getSongRecordings();
+    if (!songsForArtist.contains(song)) {
+      songsForArtist.add(song);
+    }
+    artist.setSongRecordings(songsForArtist);
+
+    Set<Artist> currArtists = new HashSet<>();
+    currArtists.add(artist);
+    song.setArtists(currArtists);
+    songRepository.save(song);
+    return song;
+  }
+
+  @PutMapping("/updateSong/{songId}")
+  public Song updateSong(
+      @PathVariable("songId") Integer songId,
+      @RequestBody Song updatedSong
+  ) {
+    Song old = songRepository.findById(songId).get();
+    old.setDuration(updatedSong.getDuration());
+    old.setName(updatedSong.getName());
+    return songRepository.save(old);
   }
 }
