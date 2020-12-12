@@ -16,7 +16,6 @@ import com.example.myapp2.repositories.UserRepository;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -58,29 +57,6 @@ public class SongDao {
       @PathVariable("id") Integer id) {
     songRepository.deleteById(id);
   }
-
-//  @GetMapping("/createSong/{artistId}/{songName}")
-//  public Song createSong(
-//      @PathVariable("artistId") Integer artistId,
-//      @PathVariable("songName") String songName) {
-//    Song song = new Song();
-//    song.setName(songName);
-//
-//    Set<Artist> artists = song.getArtists();
-//    Artist currentArtist = artistRepository.findById(artistId).get();
-//    artists.add(currentArtist);
-//    song.setArtists(artists);
-//
-//    songRepository.save(song);
-//
-//    Set<Song> recordings = currentArtist.getSongRecordings();
-//    recordings.add(song);
-//    currentArtist.setSongRecordings(recordings);
-//
-//    artistRepository.save(currentArtist);
-//
-//    return song;
-//  }
 
   @GetMapping("/addSongToPlaylist/{playlistId}/{songId}")
   public Playlist addSongToPlaylist(
