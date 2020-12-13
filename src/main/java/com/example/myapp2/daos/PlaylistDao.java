@@ -9,7 +9,10 @@ import com.example.myapp2.models.User;
 import com.example.myapp2.repositories.GenreRepository;
 import com.example.myapp2.repositories.PlaylistRepository;
 import com.example.myapp2.repositories.UserRepository;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +93,7 @@ public class PlaylistDao {
     public Playlist createPlaylist(
             @RequestBody Playlist newPlaylist
     ) {
+        newPlaylist.setCreatedAt(LocalDate.now());
         playlistRepository.save(newPlaylist);
         return newPlaylist;
     }
