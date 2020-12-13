@@ -1,9 +1,11 @@
 package com.example.myapp2.daos;
 
-import com.example.myapp2.models.Listener;
-import com.example.myapp2.models.User;
+import com.example.myapp2.models.*;
 import com.example.myapp2.repositories.ListenerRepository;
 import com.example.myapp2.repositories.UserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -41,6 +43,22 @@ public class ListenerDao {
         Listener listener = new Listener(userId);
         listenerRepository.save(listener);
         return listener;
+    }
+
+    @GetMapping("/findListenerInformation")
+    public List<ListenerInformation> findListenerInformation(){
+        List<ListenerInformation> informations = new ArrayList<>();
+
+        Iterable<Listener> listeners = findAllListeners();
+        for (Listener l : listeners){
+            int userId = l.getUserId();
+            User u = userRepository.findById(userId).get();
+            String listenerName = (u.getFirstName() + " " + u.getLastName());
+
+            ListenerInformation info = new ListenerInformation(l, listenerName);
+            informations.add(info);
+        }
+        return informations;
     }
 
 }

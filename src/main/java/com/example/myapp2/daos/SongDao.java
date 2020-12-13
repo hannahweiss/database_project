@@ -80,6 +80,28 @@ public class SongDao {
     return currentPlaylist;
   }
 
+  @GetMapping("/deleteSongFromPlaylist/{playlistId}/{songId}")
+  public Playlist deleteSongFromPlaylist(
+          @PathVariable("playlistId") Integer playlistId,
+          @PathVariable("songId") Integer songId) {
+    Song song = songRepository.findById(songId).get();
+
+    Set<Playlist> playlists = song.getPlaylists();
+    Playlist currentPlaylist = playlistRepository.findById(playlistId).get();
+    playlists.remove(currentPlaylist);
+    song.setPlaylists(playlists);
+
+    songRepository.save(song);
+
+    Set<Song> songAdditions = currentPlaylist.getSongAdditions();
+    songAdditions.remove(song);
+    currentPlaylist.setSongAdditions(songAdditions);
+
+    playlistRepository.save(currentPlaylist);
+
+    return currentPlaylist;
+  }
+
   @GetMapping("/findArtistsBySong/{songId}")
   public Set<User> findArtistsBySong(
       @PathVariable("songId") Integer songId) {
