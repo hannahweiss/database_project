@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(origins = "*")
@@ -38,14 +40,12 @@ public class ArtistDao {
             @PathVariable("userId") Integer userId) {
         artistRepository.deleteById(userId);
     }
-    @GetMapping("/createArtist")
-    public Artist createArtist() {
-        User user = new User();
-        userRepository.save(user);
 
-        Integer userId = user.getId();
+    @GetMapping("/createArtist/{userId}")
+    public Artist createArtist(
+        @PathVariable("userId") Integer userId
+    ) {
         Artist artist = new Artist(userId);
-        artist.setBio("I'm a new artist!");
         artistRepository.save(artist);
         return artist;
     }
